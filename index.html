@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A Day to Remember</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #101019;
+  color: white;
+  font-family: Georgia, serif;
+  min-height: 100vh;
+}
+
+button {
+  cursor: pointer;
+  font-family: inherit;
+}
+
+#game {
+  max-width: 850px;
+  min-height: 100vh;
+  margin: auto;
+  background: #191925;
+  position: relative;
+  overflow: hidden;
+}
+
+.screen {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* COVER */
+
+.cover {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 30px;
+  background:
+    linear-gradient(#15152299,#151522ee),
+    radial-gradient(circle at 50% 30%,#bd789b,#25243d 65%);
+}
+
+.cover h1 {
+  font-size: 48px;
+  letter-spacing: 5px;
+  margin-bottom: 5px;
+}
+
+.cover p {
+  color: #d6b9d0;
+  letter-spacing: 3px;
+  font-size: 12px;
+}
+
+.start {
+  margin-top: 40px;
+  background: #d99aba;
+  color: #211625;
+  border: none;
+  padding: 15px 45px;
+  border-radius: 30px;
+  font-size: 15px;
+}
+
+/* SCENE */
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  padding: 18px;
+  font-family: Arial;
+  font-size: 12px;
+  color: #d4a9c4;
+  border-bottom: 1px solid #ffffff15;
+}
+
+.scene {
+  height: 42vh;
+  min-height: 250px;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  background: linear-gradient(160deg,#746080,#d19aaf,#34314c);
+  transition: background 1s;
+}
+
+.scene::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(transparent,#171722aa);
+}
+
+.scene-title {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  font-family: Arial;
+  font-size: 11px;
+  letter-spacing: 3px;
+  color: #fff;
+}
+
+.character {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  animation: appear .5s;
+}
+
+.avatar {
+  width: 125px;
+  height: 125px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: auto;
+  font-size: 60px;
+  background: linear-gradient(135deg,#f6d6e6,#ad83b6);
+  border: 4px solid #ffffff99;
+  box-shadow: 0 0 40px #e8b7d877;
+}
+
+.character-name {
+  margin-top: 12px;
+  font-family: Arial;
+  letter-spacing: 3px;
+  font-size: 14px;
+}
+
+@keyframes appear {
+  from {opacity:0; transform:translateY(15px);}
+  to {opacity:1; transform:translateY(0);}
+}
+
+/* DIALOG */
+
+.dialog-area {
+  flex: 1;
+  padding: 25px 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.chapter {
+  color: #d99aba;
+  font-family: Arial;
+  font-size: 11px;
+  letter-spacing: 3px;
+  margin-bottom: 20px;
+}
+
+.dialog-box {
+  background: #252432;
+  border: 1px solid #ffffff15;
+  border-radius: 15px;
+  padding: 22px;
+  min-height: 160px;
+  line-height: 1.8;
+  font-size: 16px;
+  color: #eee5ee;
+}
+
+.dialog-name {
+  color: #e3a6ca;
+  font-family: Arial;
+  font-size: 12px;
+  letter-spacing: 2px;
+  margin-bottom: 12px;
+}
+
+#dialogText {
+  white-space: pre-line;
+}
+
+.controls {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.next {
+  border: none;
+  background: #d99aba;
+  color: #211625;
+  border-radius: 12px;
+  padding: 15px;
+  font-size: 15px;
+}
+
+.choice {
+  background: #302b3d;
+  color: white;
+  border: 1px solid #bd8bab66;
+  padding: 14px;
+  border-radius: 10px;
+  text-align: left;
+}
+
+.choice:hover {
+  background: #59425d;
+}
+
+.footer {
+  padding: 15px;
+  color: #82778c;
+  text-align: center;
+  font-family: Arial;
+  font-size: 10px;
+}
+
+.music {
+  background: #282432;
+  border: 1px solid #d99aba55;
+  color: #e7b4d0;
+  border-radius: 20px;
+  padding: 9px 15px;
+  font-size: 12px;
+}
+
+#progress {
+  height: 3px;
+  background: #d99aba;
+  width: 0%;
+  transition: width .3s;
+}
+
+.ending {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 30px;
+  background: radial-gradient(circle,#7c526e,#191925 70%);
+}
+
+.ending h1 {
+  font-size: 38px;
+  color: #f2c0d9;
+}
+
+.ending button {
+  background: #d99aba;
+  border: none;
+  border-radius: 20px;
+  padding: 14px 35px;
+  margin-top: 20px;
+}
+</style>
+</head>
+
+<body>
+<div id="game">
+
+<!-- COVER -->
+
+<div id="cover" class="cover">
+  <p>AN INTERACTIVE VISUAL NOVEL</p>
+  <h1>A DAY TO<br>REMEMBER</h1>
+  <p>A LITTLE STORY ABOUT LIFE</p>
+  <button class="start" onclick="startGame()">START GAME</button>
+  <p style="margin-top:50px">BEST EXPERIENCED WITH MUSIC</p>
+</div>
+
+<!-- GAME SCREEN -->
+
+<div id="screen" class="screen hidden">
+
+  <div class="topbar">
+    <span id="chapterTop">CHAPTER 01</span>
+    <button class="music" onclick="toggleMusic()" id="musicButton">
+      ♫ PLAY MUSIC
+    </button>
+  </div>
+
+  <div id="progress"></div>
+
+  <div class="scene" id="scene">
+    <div class="scene-title" id="sceneTitle">MONDAY MORNING</div>
+    <div class="character">
+      <div class="avatar" id="avatar">🌸</div>
+      <div class="character-name" id="characterName">NARRATOR</div>
+    </div>
+  </div>
+
+  <div class="dialog-area">
+    <div class="chapter" id="chapter">CHAPTER 01 — THE BEGINNING</div>
+
+    <div class="dialog-box">
+      <div class="dialog-name" id="speaker">NARRATOR</div>
+      <div id="dialogText"></div>
+    </div>
+
+    <div class="controls" id="controls">
+      <button class="next" onclick="nextDialogue()">NEXT →</button>
+    </div>
+  </div>
+
+  <div class="footer">
+    A DAY TO REMEMBER · VISUAL NOVEL
+  </div>
+</div>
+
+<!-- ENDING -->
+
+<div id="ending" class="ending hidden">
+  <div>
+    <p>YOUR STORY HAS ENDED</p>
+    <h1 id="endingTitle">THE END</h1>
+    <p id="endingText"></p>
+    <button onclick="restartGame()">PLAY AGAIN</button>
+  </div>
+</div>
+
+</div>
+
+<!--
+UPLOAD FILE PAPARAZZI.MP3
+INTO THE SAME FOLDER AS INDEX.HTML
+-->
+<audio id="bgMusic" loop>
+  <source src="paparazzi.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+
+/* STORY DATABASE */
+
+const story = [
+
+{
+ chapter:"CHAPTER 01 — THE BEGINNING",
+ location:"MONDAY MORNING",
+ bg:"linear-gradient(150deg,#746080,#d19aaf,#34314c)",
+ avatar:"🌸",
+ name:"NARRATOR",
+ speaker:"NARRATOR",
+ text:"Monday, 06:30 AM.\n\nThe morning sunlight slowly entered through the bedroom window. Another ordinary day was about to begin.\n\nYou opened your eyes, stared at the ceiling, and wondered why weekends always felt so short.\n\nYour phone vibrated beside your pillow.",
+},
+
+{
+ avatar:"📱",
+ name:"PHONE",
+ speaker:"UNKNOWN",
+ text:"Good morning!\n\nDon't forget that we have a meeting after school today. Be there on time, okay?",
+},
+
+{
+ avatar:"🌸",
+ name:"YOU",
+ speaker:"YOU",
+ text:"You slowly sat up and looked at the notification.\n\nAnother busy day. Another list of things to do.\n\nBut somehow, you didn't feel like getting out of bed yet.",
+},
+
+{
+ avatar:"🌸",
+ name:"YOU",
+ speaker:"NARRATOR",
+ text:"You finally stood up, walked toward the window, and looked outside.\n\nThe streets were already busy. Cars passing by, people rushing to work, and the sound of the morning city.\n\nLife was moving, whether you were ready or not.",
+},
+
+{
+ avatar:"☕",
+ name:"MORNING",
+ speaker:"NARRATOR",
+ text:"After getting ready, you went downstairs.\n\nBreakfast was waiting on the table. Your favorite drink was beside a small plate of toast.\n\nFor a moment, everything felt peaceful.",
+},
+
+{
+ avatar:"🌸",
+ name:"YOU",
+ speaker:"NARRATOR",
+ text:"You checked your phone one more time.\n\nThree unread messages. Two missed notifications. And one reminder you almost forgot.\n\nToday might be more interesting than you expected.",
+},
+
+{
+ avatar:"🚶",
+ name:"OUTSIDE",
+ speaker:"NARRATOR",
+ text:"07:15 AM.\n\nYou stepped outside and started walking toward your destination.\n\nThe weather was nice. The wind was gentle, and the sky looked unusually beautiful.\n\nYou put your earphones on and continued walking.",
+},
+
+{
+ avatar:"🎧",
+ name:"YOU",
+ speaker:"NARRATOR",
+ text:"A familiar song started playing.\n\nYou smiled a little.\n\nSometimes, music could make an ordinary morning feel like a scene from a movie.",
+},
+
+{
+ avatar:"🌸",
+ name:"YOU",
+ speaker:"NARRATOR",
+ text:"Suddenly, someone called your name from behind.\n\nYou stopped walking and turned around.",
+},
+
+{
+ avatar:"👤",
+ name:"ALEX",
+ speaker:"ALEX",
+ text:"Hey! Wait for me!\n\nI've been calling you since the corner. Are you really that focused on your music?",
+},
+
+{
+ avatar:"🌸",
+ name:"YOU",
+ speaker:"NARRATOR",
+ text:"Alex finally caught up with you, slightly out of breath.\n\nThey laughed and adjusted their bag.",
+},
+
+{
+ avatar:"👤",
+ name:"ALEX",
+ speaker:"ALEX",
+ text:"Anyway, how was your morning?\n\nYou look like someone who just woke up five minutes ago.",
+},
+
+{
+ avatar:"🌸",
+ name:"YOU",
+ speaker:"NARRATOR",
+ text:"You looked at Alex and considered your answer.",
+ choices:[
+  {text:"'I'm doing fine. Just a little sleepy.'",next:13},
+  {text:"'Honestly, I don't want to be here today.'",next:14},
+  {text:"'What about you? You look exhausted.'",next:15}
+ ]
+},
+
+{
+ avatar:"👤",
+ name:"ALEX",
+ speaker:"ALEX",
+ text:"I knew it. You really need more sleep.\n\nAnyway, let's go before we're late.",
+},
+
+{
+ avatar:"👤",
+ name:"ALEX",
+ speaker:"ALEX",
+ text:"Same here, honestly.\n\nBut don't worry. We'll get through today somehow.",
+},
+
+{
+ avatar:"👤",
+ name:"ALEX",
+ speaker:"ALEX",
+ text:"Me? I'm perfectly fine.\n\nOkay, maybe not. I stayed up watching movies last night.",
+},
+
+{
+ avatar:"🏫",
+ name:"SCHOOL",
+ speaker:"NARRATOR",
+ text:"A few minutes later, you finally arrived.\n\nThe hallway was crowded. People were talking, laughing, and rushing into their classrooms.\n\nIt was just another ordinary day, but something about it felt different.",
+},
+
+{
+ avatar:"👤",
+ name:"ALEX",
+ speaker:"ALEX",
+ text:"Hey, before we go inside, I need to tell you something.\n\nActually, it's kind of important.",
+},
+
+{
+ avatar:"🌸",
+ name:"YOU",
+ speaker:"NARRATOR",
+ text:"Alex suddenly became quiet.\n\nThey looked around before continuing.",
+ choices:[
+  {text:"'Okay, tell me. What's going on?'",next:19},
+  {text:"'Why are you acting so suspicious?'",next:20},
+  {text:"'Can we talk about it later?'",next:21}
+ ]
+},
+
+{
+ avatar:"👤",
+ name:"ALEX",
+ speaker:"ALEX",
+ text:"Well... I heard that something interesting is going to happen this afternoon.\n\nBut I can't tell you everything yet.",
+},
+
+{
+ avatar:"👤",
+ name:"ALEX",
+ speaker:"ALEX",
+ text:"What? I'm not suspicious!\n\nOkay, maybe I am. But you'll find out soon enough.",
+},
+
+{
+ avatar:"👤",
+ name:"ALEX",
+ speaker:"ALEX",
+ text:"Sure. I'll tell you after class.\n\nJust don't forget, okay?",
+},
+
+{
+ avatar:"🏫",
+ name:"CLASSROOM",
+ speaker:"NARRATOR",
+ text:"The school bell rang.\n\nYou and Alex entered the classroom and took your usual seats.\n\nThe teacher started explaining the lesson, but your thoughts kept returning to what Alex had said earlier.",
+},
+
+{
+ avatar:"🌸",
+ name:"YOU",
+ speaker:"NARRATOR",
+ text:"You looked out of the window.\n\nClouds were slowly moving across the sky.\n\nYou wondered what the rest of the day would bring.",
+},
+
+{
+ avatar:"📱",
+ name:"PHONE",
+ speaker:"MESSAGE",
+ text:"NEW MESSAGE.\n\nAlex: Hey, don't leave immediately after class. I really want to show you something.",
+},
+
+{
+ avatar:"🌸",
+ name:"YOU",
+ speaker:"NARRATOR",
+ text:"You put your phone away.\n\nThe day continued, filled with notes, conversations, and occasional laughter.\n\nEventually, the final bell rang.",
+},
+
+{
+ avatar:"🌇",
+ name:"AFTERNOON",
+ speaker:"NARRATOR",
+ text:"The afternoon sunlight painted the hallway in warm golden colors.\n\nStudents started leaving one by one.\n\nYou packed your things and remembered Alex's message.",
+},
+
+{
+ avatar:"👤",
+ name:"ALEX",
+ speaker:"ALEX",
+ text:"There you are!\n\nI thought you were going to leave without me.",
+},
+
+{
+ avatar:"🌸",
+ name:"YOU",
+ speaker:"NARRATOR",
+ text:"Alex smiled and pointed toward the school gate.\n\n'Come on. I want to take you somewhere.'",
+ choices:[
+  {text:"Go with Alex.",next:29},
+  {text:"Ask where you're going first.",next:30},
+  {text:"Say that you need to go home.",next:31}
+ ]
+},
+
+{
+ avatar:"🌇",
+ name:"THE PARK",
+ speaker:"NARRATOR",
+ text:"You followed Alex to a small park near the school.\n\nThere were trees along the pathway, benches under the shade, and a beautiful view of the afternoon sky.\n\nIt was surprisingly peaceful.",
+},
+
+{
+ avatar:"👤",
+ name:"ALEX",
+ speaker:"ALEX",
+ text:"I knew you'd like this place.\n\nI've been coming here whenever I need some time to think.",
+},
+
+{
+ avatar:"👤",
+ name:"ALEX",
+ speaker:"ALEX",
+ text:"It's a surprise. You'll understand when we get there.\n\nTrust me for once!",
+},
+
+{
+ avatar:"🌸",
+ name:"YOU",
+ speaker:"NARRATOR",
+ text:"You decided to head home.\n\nAlex waved goodbye, promising to tell you everything tomorrow.\n\nIt wasn't exactly the afternoon you expected, but perhaps that was okay.",
+ choices:[
+  {text:"Continue your day.",next:32}
+ ]
+},
+
+{
+ avatar:"🌅",
+ name:"SUNSET",
+ speaker:"NARRATOR",
+ text:"The sun slowly disappeared behind the buildings.\n\nYou sat beside Alex, listening to the wind and watching the sky change colors.\n\nFor once, there was no rush. No deadlines. No expectations.",
+},
+
+{
+ avatar:"👤",
+ name:"ALEX",
+ speaker:"ALEX",
+ text:"You know what?\n\nI think we spend too much time worrying about tomorrow.\n\nSometimes, we should just enjoy today.",
+},
+
+{
+ avatar:"🌸",
+ name:"YOU",
+ speaker:"NARRATOR",
+ text:"You looked at the sky and thought about those words.\n\nMaybe Alex was right.\n\nLife wasn't always about having everything figured out.",
+},
+
+{
+ avatar:"👤",
+ name:"ALEX",
+ speaker:"ALEX",
+ text:"Anyway, I have something for you.\n\nIt's not expensive or anything. I just thought you might like it.",
+},
+
+{
+ avatar:"🎁",
+ name:"A SMALL GIFT",
+ speaker:"NARRATOR",
+ text:"Alex handed you a small envelope.\n\nInside was a photograph of the two of you, taken on a random day several weeks ago.\n\nYou hadn't even noticed when the picture was taken.",
+},
+
+{
+ avatar:"🌸",
+ name:"YOU",
+ speaker:"NARRATOR",
+ text:"You smiled as you looked at the photograph.\n\nIt was a simple memory, but somehow it felt important.\n\nSome moments were worth keeping, even when they seemed ordinary at first.",
+},
+
+{
+ avatar:"🌙",
+ name:"EVENING",
+ speaker:"NARRATOR",
+ text:"Eventually, it was time to go home.\n\nYou said goodbye to Alex and walked down the familiar street.\n\nThe city lights slowly turned on as the sky became darker.",
+},
+
+{
+ avatar:"📱",
+ name:"PHONE",
+ speaker:"MESSAGE",
+ text:"Alex: Did you get home safely?\n\nAlex: Today was fun. We should do this again sometime.",
+},
+
+{
+ avatar:"🌸",
+ name:"YOU",
+ speaker:"NARRATOR",
+ text:"You looked at the message and smiled.\n\nMaybe tomorrow would be another ordinary day.\n\nMaybe something unexpected would happen.\n\nBut for now, you were happy with today.",
+},
+
+{
+ avatar:"🌙",
+ name:"YOUR ROOM",
+ speaker:"NARRATOR",
+ text:"You changed into comfortable clothes and sat beside your window.\n\nYour favorite song played quietly in the background.\n\nYou opened your journal and started writing about the day.",
+},
+
+{
+ avatar:"🌸",
+ name:"YOU",
+ speaker:"NARRATOR",
+ text:"'Dear diary,\n\nToday wasn't perfect. Nothing extraordinary happened. But I laughed, I talked, and I made another memory.\n\nMaybe that's enough.'",
+},
+
+{
+ avatar:"🌌",
+ name:"THE END",
+ speaker:"NARRATOR",
+ text:"And so, another day came to an end.\n\nNot every story needs a dramatic beginning.\nNot every memory needs a special occasion.\n\nSometimes, the best moments are simply the ones we never planned.\n\nThank you for playing A Day to Remember.",
+ ending:true
+}
+
+];
+
+/* GAME ENGINE */
+
+let current = 0;
+let history = [];
+
+function startGame() {
+  document.getElementById("cover").classList.add("hidden");
+  document.getElementById("screen").classList.remove("hidden");
+
+  current = 0;
+  history = [];
+
+  showDialogue();
+}
+
+function showDialogue() {
+
+  let data = story[current];
+
+  document.getElementById("chapter").textContent =
+    data.chapter || "A DAY TO REMEMBER";
+
+  document.getElementById("chapterTop").textContent =
+    "CHAPTER 01";
+
+  document.getElementById("sceneTitle").textContent =
+    data.location || "SOMEWHERE";
+
+  document.getElementById("scene").style.background =
+    data.bg || "linear-gradient(150deg,#746080,#d19aaf,#34314c)";
+
+  document.getElementById("avatar").textContent =
+    data.avatar || "🌸";
+
+  document.getElementById("characterName").textContent =
+    data.name || "NARRATOR";
+
+  document.getElementById("speaker").textContent =
+    data.speaker || "NARRATOR";
+
+  document.getElementById("dialogText").textContent =
+    data.text;
+
+  document.getElementById("progress").style.width =
+    ((current + 1) / story.length * 100) + "%";
+
+  let controls = document.getElementById("controls");
+  controls.innerHTML = "";
+
+  if (data.choices) {
+
+    data.choices.forEach(choice => {
+
+      let button = document.createElement("button");
+      button.className = "choice";
+      button.textContent = choice.text;
+
+      button.onclick = () => {
+        history.push(current);
+        current = choice.next;
+        showDialogue();
+      };
+
+      controls.appendChild(button);
+
+    });
+
+  } else {
+
+    let button = document.createElement("button");
+    button.className = "next";
+
+    button.textContent =
+      data.ending ? "FINISH STORY" : "NEXT →";
+
+    button.onclick = nextDialogue;
+
+    controls.appendChild(button);
+  }
+
+  if (data.ending) {
+    controls.firstChild.textContent = "SEE ENDING";
+  }
+
+}
+
+function nextDialogue() {
+
+  if (story[current].ending) {
+    finishGame();
+    return;
+  }
+
+  history.push(current);
+  current++;
+
+  if (current >= story.length) {
+    finishGame();
+    return;
+  }
+
+  showDialogue();
+}
+
+function finishGame() {
+
+  document.getElementById("screen").classList.add("hidden");
+  document.getElementById("ending").classList.remove("hidden");
+
+  document.getElementById("endingTitle").textContent =
+    "A DAY TO REMEMBER";
+
+  document.getElementById("endingText").textContent =
+    "Every ordinary day can become an unforgettable memory. Thank you for being part of this story.";
+}
+
+function restartGame() {
+
+  document.getElementById("ending").classList.add("hidden");
+  document.getElementById("cover").classList.remove("hidden");
+
+  current = 0;
+  history = [];
+}
+
+/* MUSIC */
+
+let playing = false;
+
+function toggleMusic() {
+
+  let music = document.getElementById("bgMusic");
+  let button = document.getElementById("musicButton");
+
+  if (!playing) {
+
+    music.play().then(() => {
+      playing = true;
+      button.textContent = "♫ PAUSE MUSIC";
+    }).catch(() => {
+      button.textContent = "MUSIC FILE NOT FOUND";
+    });
+
+  } else {
+
+    music.pause();
+    playing = false;
+    button.textContent = "♫ PLAY MUSIC";
+
+  }
+}
+
+/* KEYBOARD SUPPORT */
+
+document.addEventListener("keydown", function(event) {
+
+  if (event.code === "Space" || event.code === "ArrowRight") {
+
+    if (!document.getElementById("screen").classList.contains("hidden")) {
+
+      if (!story[current].choices) {
+        event.preventDefault();
+        nextDialogue();
+      }
+
+    }
+
+  }
+
+});
+
+</script>
+</body>
+  </html>
+  
